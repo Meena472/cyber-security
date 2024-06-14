@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Card Encryption/Decryption</title>
+</head>
+<body>
+    <h1>Credit Card Encryption/Decryption</h1>
+
+    <h2>Encrypt</h2>
+    <input type="text" id="creditCard" placeholder="Enter credit card number">
+    <input type="password" id="passwordEncrypt" placeholder="Enter password">
+    <button onclick="encryptCard()">Encrypt</button>
+    <p>Encrypted Data: <span id="encryptedData"></span></p>
+
+    <h2>Decrypt</h2>
+    <input type="text" id="encryptedCard" placeholder="Enter encrypted data">
+    <input type="password" id="passwordDecrypt" placeholder="Enter password">
+    <button onclick="decryptCard()">Decrypt</button>
+    <p>Decrypted Data: <span id="decryptedData"></span></p>
+
+    <script>
+        async function encryptCard() {
+            const creditCard = document.getElementById('creditCard').value;
+            const password = document.getElementById('passwordEncrypt').value;
+
+            const response = await fetch('/encrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ data: creditCard, password: password })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('encryptedData').textContent = result.encrypted_data;
+            } else {
+                alert('Encryption failed');
+            }
+        }
+
+        async function decryptCard() {
+            const encryptedCard = document.getElementById('encryptedCard').value;
+            const password = document.getElementById('passwordDecrypt').value;
+
+            const response = await fetch('/decrypt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ encrypted_data: encryptedCard, password: password })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                document.getElementById('decryptedData').textContent = result.decrypted_data;
+            } else {
+                alert('Decryption failed: ' + result.error);
+            }
+        }
+    </script>
+</body>
+</html>
